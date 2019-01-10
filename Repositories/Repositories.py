@@ -21,6 +21,9 @@ class RepositoryGame(object):
     def getPinsNumbers(self):
         return self.__pinsNumbers
 
+    def getTranspose(self):
+        return [[self.__board[collumn][row] for collumn in range(len(self.__board))] for row in range(len(self.__board[0]))]
+
     def setPinsNumbers(self, newPinsNumbers):
         self.__pinsNumbers = newPinsNumbers
 
