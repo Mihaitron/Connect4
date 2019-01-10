@@ -124,7 +124,7 @@ class ServiceGame(object):
         choices += self.__checkCollumn("Y")
 
         if len(choices) == 0:
-            choices = ["a", "b", "c", "d", "e", "f", "g"]
+            choices = ["a", "b", "c", "d", "e", "f", "g"]s
         return choices
 
     def isGameOver(self):
