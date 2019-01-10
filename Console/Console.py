@@ -1,5 +1,4 @@
 from Validators.Validators import ValidatorGame
-import random
 
 class Console(object):
 
@@ -13,6 +12,7 @@ class Console(object):
                               }
 
     def __uiPrintBoard(self):
+
         self.__serviceGame.printBoard()
 
     def __uiGame(self):
@@ -47,9 +47,11 @@ class Console(object):
 
 
     def __uiHelp(self):
+
         print('Your objective is to connect 4 "x" in a row (vertically, horizontally or diagonally) by inputing the collumn you want to drop your symbol on. The computer will try to beat you to it.')
 
     def run(self):
+
         while True:
             command = input(">")
             if command == "exit":

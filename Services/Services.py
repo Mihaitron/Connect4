@@ -10,9 +10,17 @@ class ServiceGame(object):
 
     def getPinsNumbers(self, move):
 
-         return self.__repositoryGame.getPinsNumbers()[ord(move) - ord("a")]
+        '''
+            Returns the number of pins on a collumn
+        '''
 
-    def __closeToWin(self, player, list, index):
+        return self.__repositoryGame.getPinsNumbers()[ord(move) - ord("a")]
+
+    def closeToWin(self, player, list, index):
+
+        '''
+            Returns True if the given list is of the type "XXXZ", "XXZX", "XZXX" or "ZXXX" and False otherwise
+        '''
 
         if list[index] == player and list[index + 1] == player and list[index + 2] == player and list[index + 3] == "Z":
             return True
@@ -24,7 +32,11 @@ class ServiceGame(object):
             return True
         return False
 
-    def __fourInRow(self, player, board):
+    def fourInRow(self, player, board):
+
+        '''
+            Checks if there are four pins in a row, for a given player, on the board
+        '''
 
         for row in board:
             for element in range(len(row) - 3):
@@ -32,7 +44,11 @@ class ServiceGame(object):
                     return True
         return False
 
-    def __fourInDiagonal(self, player):
+    def fourInDiagonal(self, player):
+
+        '''
+            Checks if there are four pins on a diagonal, for a given player, on the board
+        '''
 
         boardTranspose = self.__repositoryGame.getTranspose()
 
@@ -47,22 +63,31 @@ class ServiceGame(object):
                     return True
         return False
 
-    def __getRightCollumn(self, rowIndex1, rowIndex2, rowIndex3, rowIndex4):
+    def getRightCollumn(self, rowIndex):
+
+        '''
+            Returns a collumn based on a given row index, provided that, on the row, there is a series like this: "XXXZ", "XXZX", "XZXX" or "ZXXX"
+        '''
+
 
         board = self.__repositoryGame.getBoard()
 
         for index in range(len(board) - 3):
-            if board[index][rowIndex1] == "X" and board[index + 1][rowIndex2] == "X" and board[index + 2][rowIndex3] == "X" and board[index + 3][rowIndex4] == "Z":
+            if board[index][rowIndex] == "X" and board[index + 1][rowIndex] == "X" and board[index + 2][rowIndex] == "X" and board[index + 3][rowIndex] == "Z":
                 return board[index + 3]
-            elif board[index][rowIndex1] == "X" and board[index + 1][rowIndex2] == "X" and board[index + 2][rowIndex3] == "Z" and board[index + 3][rowIndex4] == "X":
+            elif board[index][rowIndex] == "X" and board[index + 1][rowIndex] == "X" and board[index + 2][rowIndex] == "Z" and board[index + 3][rowIndex] == "X":
                 return board[index + 2]
-            elif board[index][rowIndex1] == "X" and board[index + 1][rowIndex2] == "Z" and board[index + 2][rowIndex3] == "X" and board[index + 3][rowIndex4] == "X":
+            elif board[index][rowIndex] == "X" and board[index + 1][rowIndex] == "Z" and board[index + 2][rowIndex] == "X" and board[index + 3][rowIndex] == "X":
                 return board[index + 1]
-            elif board[index][rowIndex1] == "Z" and board[index + 1][rowIndex2] == "X" and board[index + 2][rowIndex3] == "X" and board[index + 3][rowIndex4] == "X":
+            elif board[index][rowIndex] == "Z" and board[index + 1][rowIndex] == "X" and board[index + 2][rowIndex] == "X" and board[index + 3][rowIndex] == "X":
                 return board[index]
 
 
-    def __checkRow(self, player):
+    def checkRow(self, player):
+
+        '''
+            Checks to see if a given player is close to winning on a row, then adds a choice for the computer based on the check
+        '''
 
         boardTranspose = self.__repositoryGame.getTranspose()
 
@@ -70,16 +95,16 @@ class ServiceGame(object):
 
         for row in boardTranspose:
             for index in range(len(row) - 3):
-                if self.__closeToWin(player, row, index):
-
+                if self.closeToWin(player, row, index):
+                    print("yes")
                     for elementIndex in range(len(boardTranspose)):
                         if boardTranspose[elementIndex] == row:
                             rowIndex = elementIndex
                             break
 
-                    collumn = self.__getRightCollumn(rowIndex, rowIndex, rowIndex, rowIndex)
+                    collumn = self.getRightCollumn(rowIndex)
 
-                    if self.__canBlock(rowIndex, collumn):
+                    if self.canBlock(rowIndex, collumn):
                         if row[index] == "Z":
                             choices += chr(ord("a") + index)
                         elif row[index + 1] == "Z":
@@ -91,7 +116,11 @@ class ServiceGame(object):
 
         return choices
 
-    def __checkCollumn(self, player):
+    def checkCollumn(self, player):
+
+        '''
+            Checks to see if a given player is close to winning on a collumn, then adds a choice for the computer based on the check
+        '''
 
         board = self.__repositoryGame.getBoard()
 
@@ -99,12 +128,16 @@ class ServiceGame(object):
 
         for index1 in range(len(board)):
             for index2 in range(len(board[index1]) - 3):
-                if self.__closeToWin(player, board[index1], index2):
+                if self.closeToWin(player, board[index1], index2):
                     choices += chr(ord("a") + index1)
 
         return choices
 
-    def __canBlock(self, rowIndex, collumn):
+    def canBlock(self, rowIndex, collumn):
+
+        '''
+            Checks to see if the computer can block the player's move
+        '''
 
         index = len(collumn) - 1
 
@@ -114,14 +147,17 @@ class ServiceGame(object):
             index -= 1
         return True
 
-    def __possibleChoices(self):
+    def possibleChoices(self):
+
+        '''
+            Makes a choice list from which the computer choses from when making it's moves
+        '''
 
         choices = []
 
-        choices += self.__checkRow("X")
-        choices += self.__checkCollumn("X")
-        choices += self.__checkRow("Y")
-        choices += self.__checkCollumn("Y")
+        choices += self.checkRow("X")
+        choices += self.checkCollumn("X")
+        choices += self.checkCollumn("Y")
 
         if len(choices) == 0:
             choices = ["a", "b", "c", "d", "e", "f", "g"]
@@ -129,16 +165,24 @@ class ServiceGame(object):
 
     def isGameOver(self):
 
+        '''
+            Checks if the game is over
+        '''
+
         board = self.__repositoryGame.getBoard()
         boardTranspose = self.__repositoryGame.getTranspose()
 
-        if self.__fourInRow("X", board) or self.__fourInRow("X", boardTranspose) or self.__fourInDiagonal("X"):
+        if self.fourInRow("X", board) or self.fourInRow("X", boardTranspose) or self.fourInDiagonal("X"):
             return 1
-        elif self.__fourInRow("Y", board) or self.__fourInRow("Y", boardTranspose) or self.__fourInDiagonal("Y"):
+        elif self.fourInRow("Y", board) or self.fourInRow("Y", boardTranspose) or self.fourInDiagonal("Y"):
             return 2
         return 0
 
     def placeSymbol(self, symbol, destination):
+
+        '''
+            Places the symbol "X" for the player or "Y" for the computer on a given collumn
+        '''
 
         index = 5
         collumn = self.__repositoryGame.getCollumn(destination)
@@ -153,10 +197,18 @@ class ServiceGame(object):
 
     def aiPlay(self):
 
-        choices = self.__possibleChoices()
+        '''
+            Places a pin on a ranom choice based on a list of available choices
+        '''
+
+        choices = self.possibleChoices()
         self.placeSymbol("Y", random.choice(choices))
 
     def wipeBoard(self):
+
+        '''
+            Resets the board and the number of pins when starting a new game
+        '''
 
         board = self.__repositoryGame.getBoard()
         pinsNumbers = [0, 0, 0, 0, 0, 0, 0]
@@ -170,6 +222,10 @@ class ServiceGame(object):
         self.__repositoryGame.setPinsNumbers(pinsNumbers)
 
     def printBoard(self):
+
+        '''
+            Prints the board
+        '''
 
         collumns = "abcdefg"
         boardTranspose = self.__repositoryGame.getTranspose()
